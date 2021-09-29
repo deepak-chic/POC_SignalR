@@ -38,7 +38,7 @@ namespace POC_SignalR
             }
             
             app.UseCors(options => options
-            .WithOrigins("null")            
+            .WithOrigins("http://localhost:3001", "http://localhost:3002", "null")
             .AllowAnyMethod()
             .AllowAnyHeader()
             .AllowCredentials()

@@ -16,6 +16,10 @@ namespace POC_SignalR.Service
 
     public class EmployeeService : IEmployeeService
     {
+        public EmployeeService()
+        {
+            BroadCastEmployeeChangs();
+        }
 
         public List<Employee> GetEmployees()
         {
@@ -38,7 +42,7 @@ namespace POC_SignalR.Service
             var _employees = JsonDataHandler.GetEmployeesDefaultData();
             _employees.Add(emp);
             JsonDataHandler.SetEmployees(_employees);
-            BroadCastEmployeeChangs();
+            HubServer.Current.Clients.All.SendCoreAsync("AddEmployee", new object[] { emp });
         }
 
         public void UpdateEmployee(Employee emp)
@@ -50,7 +54,7 @@ namespace POC_SignalR.Service
             e.StartDate = emp.StartDate;
             e.TotalExp = emp.TotalExp;
             JsonDataHandler.SetEmployees(_employees);
-            BroadCastEmployeeChangs();
+            HubServer.Current.Clients.All.SendCoreAsync("UpdateEmployee", new object[] { emp });
         }
 
         public void DeleteEmployee(int id)
@@ -59,7 +63,7 @@ namespace POC_SignalR.Service
             var e = _employees.First(em => em.Id == id);
             _employees.Remove(e);
             JsonDataHandler.SetEmployees(_employees);
-            BroadCastEmployeeChangs();
+            HubServer.Current.Clients.All.SendCoreAsync("DeleteEmployee", new object[] { id });
         }
 
         public void BroadCastEmployeeChangs()

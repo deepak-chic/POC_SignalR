@@ -17,6 +17,11 @@ namespace POC_SignalR.Service
 
     public class ProjectService : IProjectService
     {
+        public ProjectService()
+        {
+            BroadCastProjectGetAllChangs();
+        }
+
         public List<Project> GetProjects()
         {
             return JsonDataHandler.GetProjectsDefaultData();
@@ -33,7 +38,7 @@ namespace POC_SignalR.Service
             var _projects = JsonDataHandler.GetProjectsDefaultData();
             _projects.Add(prj);
             JsonDataHandler.SetProjects(_projects);
-            BroadCastProjectChangs();
+            HubServer.Current.Clients.All.SendCoreAsync("AddProject", new object[] { prj });
         }
 
         public void UpdateProject(Project prj)
@@ -45,7 +50,7 @@ namespace POC_SignalR.Service
             e.StartedDate = prj.StartedDate;
             e.FinishedDate = prj.FinishedDate;
             JsonDataHandler.SetProjects(_projects);
-            BroadCastProjectChangs();
+            HubServer.Current.Clients.All.SendCoreAsync("UpdateProject", new object[] { prj });
         }
 
         public void DeleteProject(int id)
@@ -54,10 +59,10 @@ namespace POC_SignalR.Service
             var e = _projects.First(em => em.Id == id);
             _projects.Remove(e);
             JsonDataHandler.SetProjects(_projects);
-            BroadCastProjectChangs();
+            HubServer.Current.Clients.All.SendCoreAsync("DeleteProject", new object[] { id });
         }
 
-        public void BroadCastProjectChangs()
+        public void BroadCastProjectGetAllChangs()
         {
             HubServer.Current.Clients.All.SendCoreAsync("GetAllProjects", new object[] { JsonDataHandler.GetProjectsDefaultData() });
         }

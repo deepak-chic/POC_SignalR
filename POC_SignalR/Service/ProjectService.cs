@@ -13,6 +13,9 @@ namespace POC_SignalR.Service
         void AddProject(Project prj);
         void UpdateProject(Project prj);
         void DeleteProject(int id);
+        void AddMultipleProjects(List<Project> prjs);
+        void UpdateMultipleProjects(List<Project> prjs);
+        void DeleteMultipleProjects(int[] ids);
     }
 
     public class ProjectService : IProjectService
@@ -62,6 +65,42 @@ namespace POC_SignalR.Service
             HubServer.Current.Clients.All.SendCoreAsync("DeleteProject", new object[] { id });
         }
 
+        public void AddMultipleProjects(List<Project> prjs)
+        {
+            var _projects = JsonDataHandler.GetProjectsDefaultData();
+            _projects.AddRange(prjs);
+            JsonDataHandler.SetProjects(_projects);
+            HubServer.Current.Clients.All.SendCoreAsync("AddMultipleProject", new object[] { prjs });
+        }
+
+        public void UpdateMultipleProjects(List<Project> prjs)
+        {
+            var _projects = JsonDataHandler.GetProjectsDefaultData();
+            foreach (Project prj in prjs)
+            {
+                var e = _projects.First(pr => pr.Id == prj.Id);
+                e.EmpId = prj.EmpId;
+                e.Name = prj.Name;
+                e.StartedDate = prj.StartedDate;
+                e.FinishedDate = prj.FinishedDate;                
+            }
+
+            JsonDataHandler.SetProjects(_projects);
+            HubServer.Current.Clients.All.SendCoreAsync("UpdateMultipleProject", new object[] { prjs });
+        }
+
+        public void DeleteMultipleProjects(int[] ids)
+        {
+            var _projects = JsonDataHandler.GetProjectsDefaultData();
+            foreach (int id in ids)
+            {
+                var e = _projects.First(em => em.Id == id);
+                _projects.Remove(e);
+            }
+
+            JsonDataHandler.SetProjects(_projects);
+            HubServer.Current.Clients.All.SendCoreAsync("DeleteMultipleProject", new object[] { ids });
+        }
         public void BroadCastProjectGetAllChangs()
         {
             HubServer.Current.Clients.All.SendCoreAsync("GetAllProjects", new object[] { JsonDataHandler.GetProjectsDefaultData() });

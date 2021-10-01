@@ -37,6 +37,27 @@ namespace POC_SignalR.Controllers
             _projectService.DeleteProject(id);
         }
 
+        [HttpPost]
+        [Route("multiple/add")]
+        public void AddMulitpleProjects([FromBody] List<Project> projects)
+        {
+            _projectService.AddMultipleProjects(projects);
+        }
+
+        [HttpPost]
+        [Route("multiple/update")]
+        public void UpdateMultipleProjects([FromBody] List<Project> projects)
+        {
+            _projectService.UpdateMultipleProjects(projects);
+        }
+
+        [HttpPost]
+        [Route("delete/multiple}")]
+        public void DeleteProject([FromBody] int[] ids)
+        {
+            _projectService.DeleteMultipleProjects(ids);
+        }
+
         [HttpGet]
         [Route("get")]
         public List<Project> GetProject()

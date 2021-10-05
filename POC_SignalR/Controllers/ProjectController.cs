@@ -52,7 +52,7 @@ namespace POC_SignalR.Controllers
         }
 
         [HttpPost]
-        [Route("delete/multiple}")]
+        [Route("delete/multiple")]
         public void DeleteProject([FromBody] int[] ids)
         {
             _projectService.DeleteMultipleProjects(ids);
